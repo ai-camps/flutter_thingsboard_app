@@ -43,7 +43,7 @@ class PaginationGridWidget<T, B> extends StatelessWidget {
                   crossAxisCount: 2,
                 ),
           ),
-        )
+        ),
       ],
     );
   }
