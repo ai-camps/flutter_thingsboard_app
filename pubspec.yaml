@@ -109,6 +109,6 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/thingsboard.png"
+  image_path: "assets/images/mylogo.png"
 flutter_intl:
   enabled: true

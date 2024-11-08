@@ -317,15 +317,16 @@ class WidgetActionHandler with HasTbContext {
   ) async {
     try {
       List<int>? imageBytes = await controller.takeScreenshot();
-      if (imageBytes != null) {
-        String imageUrl =
-            UriData.fromBytes(imageBytes, mimeType: 'image/png').toString();
-        return WidgetMobileActionResult.successResult(
-          MobileActionResult.image(imageUrl),
+      if (imageBytes == null) {
+        return WidgetMobileActionResult.errorResult(
+          'Failed to take screenshot: no image data received',
         );
-      } else {
-        return WidgetMobileActionResult.emptyResult();
       }
+      String imageUrl =
+          UriData.fromBytes(imageBytes, mimeType: 'image/png').toString();
+      return WidgetMobileActionResult.successResult(
+        MobileActionResult.image(imageUrl),
+      );
     } catch (e) {
       return _handleError(e);
     }
