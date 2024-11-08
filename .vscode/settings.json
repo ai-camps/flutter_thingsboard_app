@@ -1,3 +1,17 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cSpell.words": [
+        "cupertino",
+        "fluro",
+        "geolocator",
+        "inappwebview",
+        "jsonwebtoken",
+        "mocktail",
+        "mylogo",
+        "nullsafety",
+        "Schyler",
+        "scrollview",
+        "thingsboard",
+        "timeago"
+    ]
 }
