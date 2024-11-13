@@ -38,9 +38,18 @@ class EndpointService implements IEndpointService {
 
   @override
   Future<String> getEndpoint() async {
-    _cachedEndpoint ??= databaseService.getSelectedEndpoint();
+    _cachedEndpoint ??= _ensureHttpScheme(
+        databaseService.getSelectedEndpoint() ??
+            ThingsboardAppConstants.thingsBoardApiEndpoint);
+    return _cachedEndpoint!;
+  }
 
-    return _cachedEndpoint ?? ThingsboardAppConstants.thingsBoardApiEndpoint;
+  // Helper method to ensure URL has http scheme
+  String _ensureHttpScheme(String url) {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return 'http://$url';
+    }
+    return url;
   }
 
   @override

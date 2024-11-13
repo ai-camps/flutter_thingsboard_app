@@ -85,44 +85,49 @@ class TbContext implements PopEntry {
   final bottomNavigationTabChangedStream = StreamController<int>.broadcast();
 
   Future<void> init() async {
-    _handleRootState = true;
-
-    final endpoint = await getIt<IEndpointService>().getEndpoint();
-    log.debug('TbContext::init() endpoint: $endpoint');
-
-    tbClient = ThingsboardClient(
-      endpoint,
-      storage: getIt(),
-      onUserLoaded: onUserLoaded,
-      onError: onError,
-      onLoadStarted: onLoadStarted,
-      onLoadFinished: onLoadFinished,
-      computeFunc: <Q, R>(callback, message) => compute(callback, message),
-      debugMode: kDebugMode,
-    );
-
-    oauth2Client = TbOAuth2Client(
-      tbContext: this,
-      appSecretProvider: AppSecretProvider.local(),
-    );
-
     try {
-      if (UniversalPlatform.isAndroid) {
-        _androidInfo = await deviceInfoPlugin.androidInfo;
-        _oauth2PlatformType = PlatformType.ANDROID;
-      } else if (UniversalPlatform.isIOS) {
-        _iosInfo = await deviceInfoPlugin.iosInfo;
-        _oauth2PlatformType = PlatformType.IOS;
-      } else {
-        _oauth2PlatformType = PlatformType.WEB;
+      _handleRootState = true;
+
+      final endpoint = await getIt<IEndpointService>().getEndpoint();
+      log.debug('TbContext::init() endpoint: $endpoint');
+
+      tbClient = ThingsboardClient(
+        endpoint,
+        storage: getIt(),
+        onUserLoaded: onUserLoaded,
+        onError: onError,
+        onLoadStarted: onLoadStarted,
+        onLoadFinished: onLoadFinished,
+        computeFunc: <Q, R>(callback, message) => compute(callback, message),
+        debugMode: kDebugMode,
+      );
+
+      oauth2Client = TbOAuth2Client(
+        tbContext: this,
+        appSecretProvider: AppSecretProvider.local(),
+      );
+
+      try {
+        if (UniversalPlatform.isAndroid) {
+          _androidInfo = await deviceInfoPlugin.androidInfo;
+          _oauth2PlatformType = PlatformType.ANDROID;
+        } else if (UniversalPlatform.isIOS) {
+          _iosInfo = await deviceInfoPlugin.iosInfo;
+          _oauth2PlatformType = PlatformType.IOS;
+        } else {
+          _oauth2PlatformType = PlatformType.WEB;
+        }
+        if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
+          PackageInfo packageInfo = await PackageInfo.fromPlatform();
+          packageName = packageInfo.packageName;
+        } else {
+          packageName = 'web.app';
+        }
+        await tbClient.init();
+      } catch (e, s) {
+        log.error('Failed to init tbContext: $e', e, s);
+        await onFatalError(e);
       }
-      if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
-        PackageInfo packageInfo = await PackageInfo.fromPlatform();
-        packageName = packageInfo.packageName;
-      } else {
-        packageName = 'web.app';
-      }
-      await tbClient.init();
     } catch (e, s) {
       log.error('Failed to init tbContext: $e', e, s);
       await onFatalError(e);
